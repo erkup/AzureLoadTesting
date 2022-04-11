@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "webAppName": {
@@ -34,7 +34,7 @@
                 {
                     "type": "siteextensions",
                     "name": "Microsoft.ApplicationInsights.AzureWebSites",
-                    "apiVersion": "2015-08-01",
+                    "apiVersion": "2021-03-01",
                     "dependsOn": [
                         "[resourceId('Microsoft.Web/Sites', parameters('webAppName'))]"
                     ],
@@ -149,14 +149,14 @@
             }
         },
         {
-            "apiVersion": "2015-04-08",
+            "apiVersion": "2019-12-12",
             "kind": "MongoDB",
             "type": "Microsoft.DocumentDb/databaseAccounts",
             "name": "[parameters('databaseAccountId')]",
-            "location": "[parameters('databaseAccountLocation')]",
             "properties": {
                 "databaseAccountOfferType": "Standard",
-                "name": "[parameters('databaseAccountId')]"
+                "name": "[parameters('databaseAccountId')]",
+                "locations": "[parameters('databaseAccountLocation')]"
             }
         }
     ],

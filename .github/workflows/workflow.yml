@@ -9,14 +9,11 @@ on:
         - main
 
 env:
-  AZURE_WEBAPP_NAME: "KevinAzLoadTestDemoApp"    # set this to your application's name
-  LOAD_TEST_RESOURCE: "KevinAzLoadTest"
+  AZURE_WEBAPP_NAME: "AzLT-DemoApp"    # set this to your application's name
+  LOAD_TEST_RESOURCE: "AzLT-LoadTesting"
   LOAD_TEST_RESOURCE_GROUP: "AzLoadTesting"
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '14.15.1'                # set this to the node version to use
-  LOCATION: "CentralUS"
-  APPINSIGHTLOCATION: "CentralUS"
-  DATABASEACCOUNTLOCATION: "CentralUS"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -36,21 +33,14 @@ jobs:
         with:
           creds: ${{ secrets.AZURESPONSORSHIPCREDS }}
           
-    # Deploy Arm template
-      - name: Deploy ARM Template
-        uses: azure/powershell@v1
+    # Deploy Bicep file
+      - name: 'Deploy Main.Bicep file'
+        uses: azure/cli@v1.0.6
         continue-on-error: false
         with:
           inlineScript: |
-            az group create --name "${{ env.AZURE_WEBAPP_NAME }}-rg" --location "${{ env.LOCATION }}"
-            $deploymentOutputs = az deployment group create --resource-group "${{ env.AZURE_WEBAPP_NAME }}-rg" --mode Incremental --template-file ./windows-webapp-template.json --parameters webAppName="${{ env.AZURE_WEBAPP_NAME }}" --parameters hostingPlanName="${{ env.AZURE_WEBAPP_NAME }}-host" --parameters appInsightsLocation="${{ env.APPINSIGHTLOCATION }}" --parameters databaseAccountId="${{ env.AZURE_WEBAPP_NAME }}db" --parameters databaseAccountLocation="${{ env.DATABASEACCOUNTLOCATION }}" -o json
-            $deploymentOutputs = $deploymentOutputs | ConvertFrom-Json
-            $connectionString = [String]$deploymentOutputs.properties.outputs.azureCosmosDBAccountKeys.value
-            $setConnectionString = az webapp config appsettings set --name "${{ env.AZURE_WEBAPP_NAME }}" --resource-group "${{ env.AZURE_WEBAPP_NAME }}-rg" --settings CONNECTION_STRING="$connectionString"
-            $setAppSettings = az webapp config appsettings set --name "${{ env.AZURE_WEBAPP_NAME }}" --resource-group "${{ env.AZURE_WEBAPP_NAME }}-rg" --settings MSDEPLOY_RENAME_LOCKED_FILES=1
-            $setAppSettings = az webapp config appsettings set --name "${{ env.AZURE_WEBAPP_NAME }}" --resource-group "${{ env.AZURE_WEBAPP_NAME }}-rg" --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
-            $setAppSettings = az webapp config appsettings set --name "${{ env.AZURE_WEBAPP_NAME }}" --resource-group "${{ env.AZURE_WEBAPP_NAME }}-rg" --settings HEADER_VALUE="${{ secrets.MY_SECRET }}"
-          azPSVersion: "latest"
+            az deployment sub create -f $GITHUB_WORKSPACE/AzureLoadTesting/Bicep/main.bicep -l CentralUS \
+            --parameters $GITHUB_WORKSPACE/Bicep/main-parameters.json 
           
       - name: 'Deploy to Azure WebApp'
         uses: azure/webapps-deploy@v2
@@ -70,22 +60,7 @@ jobs:
         uses: azure/login@v1
         continue-on-error: false
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Create Resource Group
-        uses: azure/powershell@v1
-        continue-on-error: false
-        with:
-          inlineScript: |
-            az group create --name "${{ env.LOAD_TEST_RESOURCE_GROUP }}" --location "${{ env.LOCATION }}"
-          azPSVersion: "latest"      
-          
-      - name: Create Azure Load Testing resource
-        uses: azure/arm-deploy@v1
-        with:
-          resourceGroupName: ${{ env.LOAD_TEST_RESOURCE_GROUP }}
-          template: ./ARMTemplate/template.json
-          parameters: ./ARMTemplate/parameters.json name=${{ env.LOAD_TEST_RESOURCE }} location="${{ env.LOCATION }}"
+          creds: ${{ secrets.AZURESPONSORSHIPCREDS }}
           
       - name: 'Azure Load Testing'
         uses: azure/load-testing@v1
