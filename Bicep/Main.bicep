@@ -52,8 +52,8 @@ module cosmosConnStringToKeyVault './KeyVaultSecret.bicep' = {
   scope: RG
   name: 'cosmosConnStringToKeyVault.deployment'
   params: {
-    keyVaultName: keyVaultName
-    secretName: '${cosmosDBname}-PrimaryConnectionString'
+    keyVaultName: KeyVault.outputs.kvName
+    secretName: '${DbMod.outputs.cosmosDBnameOutput}-PrimaryConnectionString'
     secretValue: listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', cosmosDBname), '2020-04-01').connectionStrings[0].connectionString
   }
   
