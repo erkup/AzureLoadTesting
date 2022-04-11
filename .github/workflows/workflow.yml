@@ -39,7 +39,7 @@ jobs:
         continue-on-error: false
         with:
           inlineScript: |
-            az deployment sub create -f $GITHUB_WORKSPACE/AzureLoadTesting/Bicep/main.bicep -l CentralUS \
+            az deployment sub create -f $GITHUB_WORKSPACE/Bicep/main.bicep -l CentralUS \
             --parameters $GITHUB_WORKSPACE/Bicep/main-parameters.json 
           
       - name: 'Deploy to Azure WebApp'
