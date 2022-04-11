@@ -35,11 +35,11 @@ jobs:
           
     # Deploy Bicep file
       - name: 'Deploy Main.Bicep file'
-        uses: azure/cli@v1.0.6
+        uses: Azure/cli@1.0.4
         continue-on-error: false
         with:
           inlineScript: |
-            az deployment sub create -f $GITHUB_WORKSPACE/Bicep/main.bicep -l CentralUS \
+            az deployment sub create -f $GITHUB_WORKSPACE/Bicep/Main.bicep -l CentralUS \
             --parameters $GITHUB_WORKSPACE/Bicep/main-parameters.json 
           
       - name: 'Deploy to Azure WebApp'
