@@ -63,7 +63,7 @@ module LoadTestingMod 'LoadTesting.bicep' = {
   scope: RG
   name: '${loadTestingName}.deployment'
   params: {
-    loadTestingName: loadTestingName
+    loadTestingName: '${WebAppMod.outputs.webApp}-LoadTesting'
     location: 'SouthCentralUS'
   }
 }

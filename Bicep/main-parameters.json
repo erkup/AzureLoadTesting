@@ -24,7 +24,7 @@
             "value": "AzLT-LogWorkspace"
         },
         "cosmosDBname": {
-            "value": "AzLT-CosmosDB"
+            "value": "azlt-cosmosdb"
         },
         "loadTestingName": {
             "value": "AzLT-LoadTesting"

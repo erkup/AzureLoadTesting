@@ -78,3 +78,5 @@ resource logWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-previ
   name: logWorkspaceName
   location: location
 }
+
+output webApp string = webApp.name
