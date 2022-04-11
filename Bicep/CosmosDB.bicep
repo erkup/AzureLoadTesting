@@ -35,7 +35,15 @@ resource sampleCollection 'Microsoft.DocumentDB/databaseAccounts/mongodbDatabase
   properties: {
     resource: {
       id: 'sampleCollection'
-      indexes: []
+      indexes: [
+        {
+          key:{
+            keys:[
+              '_id'
+            ]
+          }
+        }
+      ]
     }
     options: {}
   }
