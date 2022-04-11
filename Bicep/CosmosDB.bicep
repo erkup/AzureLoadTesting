@@ -31,7 +31,7 @@ resource sampleDB 'Microsoft.DocumentDB/databaseAccounts/mongodbDatabases@2021-1
 }
 
 resource sampleCollection 'Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/collections@2021-11-15-preview' = {
-  name: '${cosmosDB.name}/${sampleDB.name}/sampleCollection'
+  name: '${sampleDB.name}/sampleCollection'
   properties: {
     resource: {
       id: 'sampleCollection'

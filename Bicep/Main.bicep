@@ -64,6 +64,6 @@ module LoadTestingMod 'LoadTesting.bicep' = {
   name: '${loadTestingName}.deployment'
   params: {
     loadTestingName: loadTestingName
-    location: location
+    location: 'SouthCentralUS'
   }
 }
