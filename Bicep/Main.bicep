@@ -27,7 +27,7 @@ module WebAppMod 'WebApp.bicep' = {
     location: location
     logWorkspaceName: logWorkspaceName
     webAppName: webAppName
-    cosmosConnString: '@Microsoft.KeyVault(VaultName=${KeyVault.name};SecretName=${cosmosConnStringToKeyVault.outputs.cosmosConnStringSecretName})'
+    cosmosConnString: '@Microsoft.KeyVault(VaultName=${KeyVaultMod.outputs.kvName};SecretName=${cosmosConnStringToKeyVault.outputs.cosmosConnStringSecretName})'
   }
 }
 
@@ -40,16 +40,20 @@ module DbMod 'CosmosDB.bicep' = {
   }
 }
 
-resource KeyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' existing = {
+module KeyVaultMod 'KeyVault.bicep' = {
   scope: RG
-  name: keyVaultName
+  name: '${keyVaultName}.deployment'
+  params:{
+    location: location
+    keyVaultName: keyVaultName
+  }
 }
 
 module cosmosConnStringToKeyVault './KeyVaultSecret.bicep' = {
   scope: RG
   name: 'cosmosConnStringToKeyVault.deployment'
   params: {
-    keyVaultName: KeyVault.name
+    keyVaultName: KeyVaultMod.outputs.kvName
     secretName: '${DbMod.outputs.cosmosDBname}-PrimaryConnectionString'
     secretValue: listConnectionStrings('/subscriptions/adb3d052-a923-4543-a534-324e48e5a70d/resourceGroups/AzLoadTesting/providers/Microsoft.DocumentDB/databaseAccounts/azlt-cosmosdb', '2020-04-01').connectionStrings[0].connectionString
   }
