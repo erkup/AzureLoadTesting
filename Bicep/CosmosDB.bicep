@@ -50,5 +50,5 @@ resource sampleCollection 'Microsoft.DocumentDB/databaseAccounts/mongodbDatabase
 
 }
 
-output cosmosDBnameOutput string = cosmosDB.name
+output cosmosDBname string = cosmosDB.name
 output cosmosDBresourceID string = cosmosDB.id
