@@ -66,7 +66,7 @@ resource appInsightsExtension 'Microsoft.Web/sites/siteextensions@2021-03-01' = 
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: appInsightsName
-  location: location
+  location: 'CentralUS'
   kind: 'string'
   properties: {
     Application_Type: 'web'
@@ -76,7 +76,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
 
 resource logWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' = {
   name: logWorkspaceName
-  location: location
+  location: 'CentralUS'
 }
 
 output webApp string = webApp.name
