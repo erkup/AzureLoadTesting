@@ -27,7 +27,7 @@ module WebAppMod 'WebApp.bicep' = {
     location: location
     logWorkspaceName: logWorkspaceName
     webAppName: webAppName
-    cosmosConnString: KeyVault.getSecret('${cosmosConnStringToKeyVault.outputs.cosmosConnStringSecretName}')
+    cosmosConnString: '@Microsoft.KeyVault(VaultName=${KeyVault.name};SecretName=${cosmosConnStringToKeyVault.outputs.cosmosConnStringSecretName})'
   }
 }
 
