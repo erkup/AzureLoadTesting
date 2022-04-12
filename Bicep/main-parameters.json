@@ -6,7 +6,7 @@
             "value": "AzLoadTesting"
         },
         "location": {
-            "value": "EastUS2"
+            "value": "WestCentralUS"
         },
         "webAppName": {
             "value": "AzLT-DemoApp"
