@@ -46,12 +46,12 @@ resource KeyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' existing = {
 }
 
 module cosmosConnStringToKeyVault './KeyVaultSecret.bicep' = {
-  scope: resourceGroup(subscription().subscriptionId,RG.name)
+  scope: RG
   name: 'cosmosConnStringToKeyVault.deployment'
   params: {
     keyVaultName: KeyVault.name
     secretName: '${DbMod.outputs.cosmosDBname}-PrimaryConnectionString'
-    secretValue: listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', cosmosDBname), '2020-04-01').connectionStrings[0].connectionString
+    secretValue: listConnectionStrings(cosmosDBname, '2020-04-01').connectionStrings[0].connectionString
   }
   
 }
