@@ -46,7 +46,7 @@ resource KeyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' existing = {
 }
 
 module cosmosConnStringToKeyVault './KeyVaultSecret.bicep' = {
-  scope: resourceGroup(subscription().id,RG.name)
+  scope: resourceGroup(subscription().subscriptionId,RG.name)
   name: 'cosmosConnStringToKeyVault.deployment'
   params: {
     keyVaultName: KeyVault.name
