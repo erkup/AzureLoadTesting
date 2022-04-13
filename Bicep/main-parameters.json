@@ -9,7 +9,7 @@
             "value": "NorthCentralUS"
         },
         "webAppName": {
-            "value": "AzLT-DemoApp"
+            "value": "azltdemoapp"
         },
         "hostingPlanName": {
             "value": "AzLT-DemoApp-asp"
