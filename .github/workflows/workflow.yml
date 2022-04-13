@@ -31,7 +31,7 @@ jobs:
         uses: azure/login@v1
         continue-on-error: false
         with:
-          creds: ${{ secrets.AZURESPONSORSHIPCREDS }}
+          creds: ${{ secrets.MS_INTERNAL_SUB_CREDS }}
           
     # Deploy Bicep file
       - name: 'Deploy Main.Bicep file'
@@ -60,7 +60,7 @@ jobs:
         uses: azure/login@v1
         continue-on-error: false
         with:
-          creds: ${{ secrets.AZURESPONSORSHIPCREDS }}
+          creds: ${{ secrets.MS_INTERNAL_SUB_CREDS }}
           
       - name: 'Azure Load Testing'
         uses: azure/load-testing@v1
