@@ -55,7 +55,7 @@ module cosmosConnStringToKeyVault './KeyVaultSecret.bicep' = {
   params: {
     keyVaultName: KeyVaultMod.outputs.kvName
     secretName: '${DbMod.outputs.cosmosDBname}-PrimaryConnectionString'
-    secretValue: listConnectionStrings('/subscriptions/adb3d052-a923-4543-a534-324e48e5a70d/resourceGroups/AzLoadTesting/providers/Microsoft.DocumentDB/databaseAccounts/azlt-cosmosdb', '2020-04-01').connectionStrings[0].connectionString
+    secretValue: listConnectionStrings('/subscriptions/7f027d23-4f58-4668-b662-25593ee55639/resourceGroups/AzLoadTesting/providers/Microsoft.DocumentDB/databaseAccounts/azlt-cosmosdb', '2020-04-01').connectionStrings[0].connectionString
   }
   
 }

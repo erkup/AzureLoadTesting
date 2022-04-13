@@ -3,7 +3,7 @@ param location string
 param accessPolicies array = [
   {
     tenantId: tenant().tenantId
-    objectId: 'd4a5f99f-7dcb-478e-aaed-7dc5bff9062f'
+    objectId: '5ef97f1e-3d5e-4364-8417-24808317b1fb'
     permissions: {
       keys: [
         'Get'
