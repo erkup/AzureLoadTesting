@@ -11,6 +11,7 @@ param cosmosDBname string
 param loadTestingName string
 param keyVaultName string
 param LoadTesterObjId string
+param SubId string
 
 
 resource RG 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -56,7 +57,7 @@ module cosmosConnStringToKeyVault './KeyVaultSecret.bicep' = {
   params: {
     keyVaultName: KeyVaultMod.outputs.kvName
     secretName: '${DbMod.outputs.cosmosDBname}-PrimaryConnectionString'
-    secretValue: listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', cosmosDBname), '2020-04-01').connectionStrings[0].connectionString
+    secretValue: listConnectionStrings('/subscriptions/${SubId}/resourceGroups/${RGname}/providers/Microsoft.DocumentDB/databaseAccounts/${cosmosDBname}', '2020-04-01').connectionStrings[0].connectionString
   }
   
 }
