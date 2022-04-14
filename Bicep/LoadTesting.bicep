@@ -12,6 +12,7 @@ resource roleAssignLoadTestContributor 'Microsoft.Authorization/roleAssignments@
   scope: LoadTesting
   properties: {
     principalId: LoadTesterObjId
+    principalType: 'ServicePrincipal'
     roleDefinitionId: '749a398d-560b-491b-bb21-08924219302e'
   }
 }
