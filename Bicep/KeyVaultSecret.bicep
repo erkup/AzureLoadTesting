@@ -10,4 +10,4 @@ resource keyVaultSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
   }
 }
 
-output cosmosConnStringSecretName string = keyVaultSecret.name
+output cosmosConnStringSecretName string = secretName

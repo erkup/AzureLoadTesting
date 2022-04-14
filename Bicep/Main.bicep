@@ -10,6 +10,7 @@ param logWorkspaceName string
 param cosmosDBname string
 param loadTestingName string
 param keyVaultName string
+param LoadTesterObjId string
 
 
 resource RG 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -45,7 +46,7 @@ module KeyVaultMod 'KeyVault.bicep' = {
   name: '${keyVaultName}.deployment'
   params:{
     location: location
-    keyVaultName: keyVaultName
+    keyVaultName: keyVaultName 
   }
 }
 
@@ -55,9 +56,18 @@ module cosmosConnStringToKeyVault './KeyVaultSecret.bicep' = {
   params: {
     keyVaultName: KeyVaultMod.outputs.kvName
     secretName: '${DbMod.outputs.cosmosDBname}-PrimaryConnectionString'
-    secretValue: listConnectionStrings('/subscriptions/7f027d23-4f58-4668-b662-25593ee55639/resourceGroups/AzLoadTesting/providers/Microsoft.DocumentDB/databaseAccounts/azlt-cosmosdb', '2020-04-01').connectionStrings[0].connectionString
+    secretValue: listConnectionStrings('/subscriptions/${subscription().id}/resourceGroups/${RGname}/providers/Microsoft.DocumentDB/databaseAccounts/${cosmosDBname}', '2020-04-01').connectionStrings[0].connectionString
   }
   
+}
+
+module WebAppKVaccess 'KeyVaultAccess.bicep' = {
+  scope: RG
+  name: 'WebAppKVaccess.deployment'
+  params: {
+    KeyVaultName: KeyVaultMod.outputs.kvName
+    webAppIdentity: WebAppMod.outputs.webAppIdentity
+  }
 }
 
 module LoadTestingMod 'LoadTesting.bicep' = {
@@ -66,5 +76,6 @@ module LoadTestingMod 'LoadTesting.bicep' = {
   params: {
     loadTestingName: '${WebAppMod.outputs.webApp}-LoadTesting'
     location: 'SouthCentralUS'
+    LoadTesterObjId: LoadTesterObjId
   }
 }

@@ -10,6 +10,9 @@ param cosmosConnString string
 resource webApp 'Microsoft.Web/sites@2021-03-01' = {
   name: webAppName
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     siteConfig: {
       appSettings: [
@@ -80,3 +83,4 @@ resource logWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-previ
 }
 
 output webApp string = webApp.name
+output webAppIdentity string = webApp.identity.principalId

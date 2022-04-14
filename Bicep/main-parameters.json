@@ -31,6 +31,9 @@
         },
         "keyVaultName": {
             "value": "AzLT-KeyVault"
+        },
+        "LoadTesterObjId": {
+            "value": "5ef97f1e-3d5e-4364-8417-24808317b1fb"
         }
     }
 }
