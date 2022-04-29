@@ -1,11 +1,13 @@
-param webAppName string
+param webAppPrefix string
 param hostingPlanName string
 param ASPskuName string
 param location string
 param appInsightsName string
 param logWorkspaceName string
-@secure()
-param cosmosConnString string
+param kvName string
+param secretName string 
+
+var webAppName = take('${webAppPrefix}${uniqueString(resourceGroup().id)}',15)
 
 resource webApp 'Microsoft.Web/sites@2021-03-01' = {
   name: webAppName
@@ -34,7 +36,7 @@ resource webApp 'Microsoft.Web/sites@2021-03-01' = {
         }
         {
           name: 'CONNECTION_STRING'
-          value: cosmosConnString
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/${secretName}'
         }
       ]
       phpVersion: '7.1'
@@ -43,31 +45,21 @@ resource webApp 'Microsoft.Web/sites@2021-03-01' = {
   }
 }
 
+
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: hostingPlanName
   location: location
   sku: {
     name: ASPskuName
-    capacity: 1
   }
   kind: 'app'
-  properties: {
-    perSiteScaling: false
-    maximumElasticWorkerCount: 1
-    isSpot: false
-    reserved: false
-    isXenon: false
-    hyperV: false
-    targetWorkerCount: 0
-    targetWorkerSizeId: 0
-  }
 }
 
-resource appInsightsExtension 'Microsoft.Web/sites/siteextensions@2021-03-01' = {
+/* resource appInsightsExtension 'Microsoft.Web/sites/siteextensions@2021-03-01' = {
   name: '${webApp.name}/Microsoft.ApplicationInsights.AzureWebsites'
-}
+} */
 
-resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: appInsightsName
   location: location
   kind: 'string'
@@ -77,7 +69,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   }
 }
 
-resource logWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' = {
+resource logWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: logWorkspaceName
   location: location
 }
