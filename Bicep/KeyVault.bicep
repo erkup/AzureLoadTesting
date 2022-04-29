@@ -1,4 +1,4 @@
-param keyVaultName string
+param keyVaultPrefix string
 param location string
 param accessPolicies array = [
   {
@@ -46,8 +46,10 @@ param accessPolicies array = [
   }
 ]
 
+var kvName = take('${keyVaultPrefix}${uniqueString(resourceGroup().id)}',15)
+
 resource KeyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
-  name: keyVaultName
+  name: kvName
   location: location
   properties: {
     sku: {
@@ -57,6 +59,7 @@ resource KeyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
     accessPolicies: accessPolicies
     enabledForTemplateDeployment:true
     tenantId: tenant().tenantId
+    enableSoftDelete: false
   }
 }
 

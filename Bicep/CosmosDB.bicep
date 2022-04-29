@@ -1,6 +1,20 @@
-param cosmosDBname string
+param cosmosDBprefix string
 param location string
+param kvName string
 
+var cosmosDBname = take('${cosmosDBprefix}${uniqueString(resourceGroup().id)}',15)
+var secretName = '${cosmosDBname}-PrimaryConnectionString'
+
+resource keyVaultSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+  name: '${kvName}/${secretName}' 
+  dependsOn: [
+    sampleCollection
+    sampleDB
+  ]
+  properties: {
+    value: listConnectionStrings('Microsoft.DocumentDB/databaseAccounts/${cosmosDBname}', '2020-04-01').connectionStrings[0].connectionString
+  }
+}
 
 resource cosmosDB 'Microsoft.DocumentDB/databaseAccounts@2021-11-15-preview' = {
   kind: 'MongoDB'
@@ -47,8 +61,8 @@ resource sampleCollection 'Microsoft.DocumentDB/databaseAccounts/mongodbDatabase
     }
     options: {}
   }
-
 }
 
 output cosmosDBname string = cosmosDB.name
 output cosmosDBresourceID string = cosmosDB.id
+output secretName string = secretName

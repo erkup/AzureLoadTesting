@@ -3,19 +3,19 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "RGname": {
-            "value": "AzLoadTesting"
+            "value": "AzLoadTesting3"
         },
         "location": {
             "value": "NorthCentralUS"
         },
-        "webAppName": {
+        "webAppPrefix": {
             "value": "AzLT-DemoApp"
         },
         "hostingPlanName": {
             "value": "AzLT-DemoApp-asp"
         },
         "ASPskuName": {
-            "value": "P1v3"
+            "value": "S1"
         },
         "appInsightsName": {
             "value": "AzLT-AppInsights"
@@ -23,20 +23,17 @@
         "logWorkspaceName": {
             "value": "AzLT-LogWorkspace"
         },
-        "cosmosDBname": {
+        "cosmosDBprefix": {
             "value": "azlt-cosmosdb"
         },
         "loadTestingName": {
             "value": "AzLT-LoadTesting"
         },
-        "keyVaultName": {
+        "keyVaultPrefix": {
             "value": "AzLT-KeyVault"
         },
         "LoadTesterObjId": {
-            "value": "5ef97f1e-3d5e-4364-8417-24808317b1fb"
-        },
-        "SubId": {
-            "value": "7f027d23-4f58-4668-b662-25593ee55639"
+            "value": "44c224b9-5ea4-4bc2-99cc-06d279417e9e"
         }
     }
 }
