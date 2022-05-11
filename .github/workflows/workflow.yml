@@ -3,15 +3,10 @@
 name: Sample App deploy
 
 # Controls when the workflow will run
-on:
-  push:
-      branches:
-        - main
+on: workflow_dispatch
 
 env:
-  AZURE_WEBAPP_NAME: "AzLT-DemoApp"    # set this to your application's name
-  LOAD_TEST_RESOURCE: "AzLT-DemoApp-LoadTesting"
-  LOAD_TEST_RESOURCE_GROUP: "AzLoadTesting"
+  AZURE_WEBAPP_NAME: "AzLT-DemoAppncf"    # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '14.15.1'                # set this to the node version to use
 
@@ -31,52 +26,11 @@ jobs:
         uses: azure/login@v1
         continue-on-error: false
         with:
-          creds: ${{ secrets.MS_INTERNAL_SUB_CREDS }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
           
-    # Deploy Bicep file
-      - name: 'Deploy Main.Bicep file'
-        uses: Azure/cli@1.0.4
-        continue-on-error: false
-        with:
-          inlineScript: |
-            az deployment sub create -f $GITHUB_WORKSPACE/Bicep/Main.bicep --name 'Main.'$RANDOM -l CentralUS \
-            --parameters $GITHUB_WORKSPACE/Bicep/main-parameters.json 
-          
+    # Deploy Arm template
       - name: 'Deploy to Azure WebApp'
         uses: azure/webapps-deploy@v2
         with: 
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-
-  loadTest:
-    name: Load Test
-    needs: build-and-deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout GitHub Actions 
-        uses: actions/checkout@v2
-          
-      - name: Login to Azure
-        uses: azure/login@v1
-        continue-on-error: false
-        with:
-          creds: ${{ secrets.MS_INTERNAL_SUB_CREDS }}
-          
-      - name: 'Azure Load Testing'
-        uses: azure/load-testing@v1
-        with:
-          loadTestConfigFile: 'SampleApp.yaml'
-          loadTestResource: ${{ env.LOAD_TEST_RESOURCE }}
-          resourceGroup: ${{ env.LOAD_TEST_RESOURCE_GROUP }}
-          env: |
-            [
-              {
-              "name": "webapp",
-              "value": "${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
-              }
-            ]          
-      
-      - uses: actions/upload-artifact@v2
-        with:
-          name: loadTestResults
-          path: ${{ github.workspace }}/loadTest

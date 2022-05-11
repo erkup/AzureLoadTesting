@@ -1,0 +1,79 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Sample App deploy
+
+# Controls when the workflow will run
+on: workflow_dispatch
+
+env:
+  AZURE_WEBAPP_NAME: "AzLT-DemoApp"    # set this to your application's name
+  LOAD_TEST_RESOURCE: "AzLT-DemoApp-LoadTesting"
+  LOAD_TEST_RESOURCE_GROUP: "AzLoadTesting"
+  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+  NODE_VERSION: '14.15.1'                # set this to the node version to use
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build-and-deploy:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout GitHub Actions 
+        uses: actions/checkout@v2
+        
+      - name: Login to Azure
+        uses: azure/login@v1
+        continue-on-error: false
+        with:
+          creds: ${{ secrets.MS_INTERNAL_SUB_CREDS }}
+          
+    # Deploy Bicep file
+      - name: 'Deploy Main.Bicep file'
+        uses: Azure/cli@1.0.4
+        continue-on-error: false
+        with:
+          inlineScript: |
+            az deployment sub create -f $GITHUB_WORKSPACE/Bicep/Main.bicep --name 'Main.'$RANDOM -l CentralUS \
+            --parameters $GITHUB_WORKSPACE/Bicep/main-parameters.json 
+          
+      - name: 'Deploy to Azure WebApp'
+        uses: azure/webapps-deploy@v2
+        with: 
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+  loadTest:
+    name: Load Test
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub Actions 
+        uses: actions/checkout@v2
+          
+      - name: Login to Azure
+        uses: azure/login@v1
+        continue-on-error: false
+        with:
+          creds: ${{ secrets.MS_INTERNAL_SUB_CREDS }}
+          
+      - name: 'Azure Load Testing'
+        uses: azure/load-testing@v1
+        with:
+          loadTestConfigFile: 'SampleApp.yaml'
+          loadTestResource: ${{ env.LOAD_TEST_RESOURCE }}
+          resourceGroup: ${{ env.LOAD_TEST_RESOURCE_GROUP }}
+          env: |
+            [
+              {
+              "name": "webapp",
+              "value": "${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
+              }
+            ]          
+      
+      - uses: actions/upload-artifact@v2
+        with:
+          name: loadTestResults
+          path: ${{ github.workspace }}/loadTest
